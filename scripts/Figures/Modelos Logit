@@ -1,7 +1,7 @@
 # Script modelos Logit:
 ##-------------------------------------------------------------------------------##
 ##-------------------------------------------------------------------------------##
-#MODEL TRAINIG: LOGIT UMBRAL OPTIMO 
+#MODEL TRAINIG: LOGIT UMBRAL OPTIMO por ROC
 
 ctrl<- trainControl(method = "cv",
                     number = 5,
