@@ -1,7 +1,7 @@
 # Script Modelos Logit - Elastic Net:
 ##-----------------------------------------------------------------------------##
 ##-----------------------------------------------------------------------------##
-#MODEL TRAINIG: ELASTIC NET UMBRAL OPTIMO 
+#MODEL TRAINIG: ELASTIC NET UMBRAL OPTIMO por ROC
 
 # Modelo usando Elastic Net, escogiendo los hiperparámetros usando cross validación
 ctrl<- trainControl(method = "cv",
