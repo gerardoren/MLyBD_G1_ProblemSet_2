@@ -18,7 +18,7 @@ ctrl_smote <- trainControl(method = "cv",
 # Grid de combinaciones de hiperparámetros
 
 grid_rf <- expand.grid(
-  mtry = 6,           
+  mtry = 2,           
   splitrule = "gini",           
   min.node.size = 20)
 
