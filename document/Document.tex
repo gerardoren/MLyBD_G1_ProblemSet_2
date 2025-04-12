@@ -1,0 +1,487 @@
+\documentclass[10pt]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%          				PACKAGES  				              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[margin=2cm, a4paper]{geometry}
+\usepackage{authblk}
+\usepackage{amsfonts}
+\usepackage{graphicx,color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[table]{xcolor}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{dcolumn}
+\usepackage{rotating}
+\usepackage{color,soul}
+\usepackage{threeparttable}
+\usepackage[capposition=top]{floatrow}
+\usepackage[labelsep=period]{caption}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, english]{babel}
+\decimalpoint
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{lscape}
+\usepackage{pdflscape}
+\usepackage{multicol}
+\usepackage[bottom]{footmisc}
+\setlength\footnotemargin{5pt}
+\usepackage{longtable} %for long tables
+\usepackage{enumerate}
+\usepackage{units}  %nicefraction
+\usepackage{placeins}
+\usepackage{booktabs,multirow}
+%% BibTeX settings
+\usepackage{natbib}
+\bibliographystyle{apalike}
+%\bibliographystyle{unsrtnat}
+\bibpunct{(}{)}{,}{a}{,}{,}
+
+
+%% paragraph formatting
+\renewcommand{\baselinestretch}{1}
+
+
+% Defines columns for tables
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\usepackage{comment} %to comment entire sections
+
+\usepackage{xfrac} %sideways fractions
+
+\usepackage{bbold} %for indicators
+
+\setcounter{secnumdepth}{6}  %To get paragraphs referenced 
+
+\usepackage{titlesec} %subsection smaller
+\titleformat*{\subsection}{\normalsize \bfseries} %subsection smaller
+%\usepackage[raggedright]{titlesec} % for sections does not hyphen words
+
+
+%\usepackage[colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=blue]{hyperref}  %Load last
+\usepackage{hyperref} 
+%% markup commands for code/software
+\let\code=\texttt
+\let\pkg=\textbf
+\let\proglang=\textsf
+\newcommand{\file}[1]{`\code{#1}'}
+\newcommand{\email}[1]{\href{mailto:#1}{\normalfont\texttt{#1}}}
+\urlstyle{same}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     			TITLE, AUTHORS AND DATE    			  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Title, authors and date
+%-------------------------------
+%	TITULO
+%-------------------------------
+
+
+\hrule \medskip 
+\noindent%
+\begin{minipage}{0.298999\textwidth} 
+\raggedright
+Profesor: Ignacio Sarmiento\\
+\vspace{2mm}
+Andres Gerardo Rendon \\
+Samuel Narváez Muñoz\\
+Jhan Camilo Pulido\\
+Nicolas Lozano Huertas\\
+
+\end{minipage}
+\noindent%
+\begin{minipage}{0.4\textwidth} 
+\centering 
+\huge 
+Problem Set 1\\ 
+\vspace{2mm}
+\normalsize 
+Big Data y Machine Learning, 2025-I\\ 
+Fecha de Entrega: 3 Marzo 2025
+\end{minipage}
+\noindent%
+\begin{minipage}{0.298999\textwidth} 
+\begin{figure}[H]
+\raggedleft
+\includegraphics[scale=0.55]{document/escudo2.jpg}
+\end{figure}
+\hfill
+\end{minipage}
+\medskip\hrule 
+\bigskip
+
+\thispagestyle{empty} % Leaves first page without page number
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    DOCUMENT    		          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Centrar "Abstract" en negrita
+\begin{center}
+    \textbf{\large Abstract}
+\end{center}
+
+% Texto del abstract
+{En este Problem Set, abordamos el desafío de la subdeclaración de ingresos en Colombia mediante el desarrollo de modelos predictivos de salarios mensuales individuales, utilizando datos de la Gran Encuesta Integrada de Hogares (GEIH) 2018 para Bogotá. Empleamos una variedad de modelos de Machine Learning que incorporan variables clave sociodemográficas y laborales para explicar la determinación de los salarios, explorando no linealidades e interacciones para mejorar la precisión de la predicción. Los resultados revelan brechas salariales de género significativas y sugieren que modelos más complejos mejoran el desempeño predictivo, medido a través del RMSE.}
+
+% Inicio de documento por secciones
+
+\section{Introducción} \label{sec:intro}
+
+La problemática que representa la no declaración precisa de los ingresos de las personas recae, principalmente, en la planeación y formulación de diferentes políticas públicas, especialmente en áreas que tienen que ver con la tributación de acuerdo a las ganancias y la reducción de la brecha desigual sobre los ingresos. En el contexto colombiano, la declaración incorrecta de los ingresos es una problemática que se evidencia con frecuencia en la evasión fiscal, causando una planeación ineficiente tanto en la repartición de recursos gubernamentales como en la distribución de carga tributaria para las personas. Así mismo, la principal causa de este conflicto es la declaración incorrecta de los ingresos personales, complicando así la formulación de políticas fiscales eficientes y, también, la repartición equitativa de los recursos públicos. 
+
+
+Ahora bien, las herramientas y modelos predictivos del salario que han surgido recientemente, resultan ser de vital importancia para detección posibles alteraciones en los ingresos declarados de acuerdo al patrón que se venía siguiendo, ayudando así a identificar el fraude fiscal. Además, estas herramientas permiten orientar mejor las políticas y programas de ayuda a poblaciones poco favorecidas. En este caso, vamos a utilizar los datos de la Gran Encuesta Integra de Hogares (GEIH) de Bogotá para el año 2018 con el objetivo de poder construir un modelo predictivo de los salarios individuales por hora de las personas, y así verificar si se presentan anomalías o disparidades en cuanto al reporte salarial que hagan las observaciones. 
+
+
+Por otra parte, la aplicación de estudios con modelos predictivos enfocados en el análisis de ingresos se ha venido aplicando cada vez más en el campo investigativo gracias a la evidencia empírica que sostiene la efectividad del modelo para hacer este tipo de predicciones. Entre estos estudios, podemos profundizar en el de Ferrer-Urbina et al. (2019) \footnote{Ferrer-Urbina, R., Karmelic-Pavlov, V., Beck-Fernández, H., \& Pinto, R. V. (2019). Un modelo predictivo de fracaso/éxito académico a partir de indicadores de ingreso, en estudiantes de una Universidad Estatal del Norte de Chile. Interciencia, 44(1), 23-29.} donde se determina el fracaso o éxito académico de acuerdo a los indicadores de ingreso para los estudiantes de la Universidad Estatal de Chile. En este caso, Ferrer-Urbina y los demás analistas aplicaron técnicas de aprendizaje autónomo con el objetivo de predecir los salarios/ingresos de los estudiantes (graduados y no graduados) universitarios para así definir el “éxito o fracaso” de estos mismos a un tiempo temprano después de graduarse. Así mismo, el estudio presentado por Echavarría, C. L., \& Riveiro, J. G. Z. (2022) \footnote{Echavarría, C. L., \& Riveiro, J. G. Z. (2022). Validación prospectiva de un modelo predictivo de ingreso y orientar la seguridad de la derivación inversa desde el triaje de los servicios de urgencias hospitalarios. Emergencias: Revista de la Sociedad Española de Medicina de Urgencias y Emergencias, 34(3), 165-173.}, utiliza también técnicas de aprendizaje automático para predecir el ingreso hospitalario para pacientes atendidos en el servicio de urgencias del hospital que a su vez cuenta con una baja prioridad de visita, donde se recogieron variables demográficas (edad, sexo, origen) y variables sobre el proceso diario en el hospital (demanda de urgencias, hora de llegada, método de llegada, entre otras) que tienen un impacto significativo sobre los niveles de ingresos. Ahora bien, gracias a los estudios previamente mencionados, existen pilares teóricos establecidos para el análisis que se va a realizar posteriormente, en donde concluimos que, tanto variables demográficas (sexo, edad, origen) como variables sociales/laborales (educación, ocupación, horas de trabajo) son de vital importancia para lograr comprender el comportamiento salarial de las personas.
+
+
+A continuación, el estudio girara en torno al siguiente modelo salarial, donde los salarios (w) va a ser nuestra variable dependiente en función de un conjunto de variables explicativas (X) adicionándole un término de error irrecuperable (u), dando como resultado: 
+\begin{equation}
+\label{eq:ols}
+    w= f(X)+u
+\end{equation}
+
+Por último, los resultados esperados del análisis son básicamente que el conjunto de variables socio-demográficas y laborales son parte determinante del modelo predictivo para entender el comportamiento de los ingresos individuales de las personas. A lo largo del estudio, se van a hacer variaciones del modelo planteado anteriormente, incluyendo polinomios entre los términos para ajustar mejor los valores de la función y, también, interacciones entre las variables con el fin de poder evidenciar discrepancias en los comportamientos salariales cuando hay más de una variable afectando a la persona. 
+
+
+
+
+\section{Datos} \label{sec:Datos}
+
+\subsection{Origen y propósito de los datos}
+
+Los datos utilizados en este análisis fueron recuperados del reporte “Medición de Pobreza Monetaria y Desigualdad” que se realizó para la ciudad de Bogotá en el 2018. Dicho reporte se construyó a partir de los datos de la Gran Encuesta Integrada de Hogares (GEIH), llevada a cabo por el Departamento Administrativo Nacional de Estadística (DANE) y que recopila información representativa sobre la realidad socioeconómica y demográfica de la población colombiana a nivel desagregado por ente territorial. Así pues, con base en la información disponible del reporte previamente mencionado para Bogotá en 2018, esta investigación tiene como objetivo la realización de un modelo econométrico que permita identificar los determinantes del salario por hora, pero que a su vez sea útil para predecir dicha variable.
+
+\subsection{Proceso de adquisición de los datos}
+
+Los datos fueron adquiridos mediante el proceso de Web Scraping del repositorio de acceso público:  
+\url{https://ignaciomsarmiento.github.io/GEIH2018_sample/}  
+el día 17/02/2025.
+El procedimiento de recuperación de los datos inició con la inspección del HTML del website, donde se identificó una lista de enlaces o hipervínculos a URL's específicas para cada elemento de la lista. Posterior a esto, se procedió a la inspección del HTML de los enlaces que contenían cada \textit{data chunk}, lo que permitió establecer que se trataba de un sitio web que genera dinámicamente el contenido de la página con JavaScript. Por lo tanto, se planteó una función de código que permite la lectura del contenido HTML de la página, distingue un elemento HTML con el atributo [w3-include-html] (el cual sería el componente dinámico), obtiene y carga la página para finalmente permitir la extracción de los datos. Esta función se aplicó para cada uno de los 10 \textit{data chunk's}, para posteriormente unirlos todos en una sola base de datos.
+
+
+\subsection{Proceso de limpieza de la base de datos}
+Una vez hecho el Web Scraping, se procedió a la limpieza y filtración de la base de datos. Primero, se filtró de acuerdo a la edad, de forma que solo quedaran las observaciones de individuos mayores a 18 años, pues es la edad legalmente establecida para acceder a un trabajo remunerado. Luego se realizó la filtración de los individuos que no se reconocían en la GEIH como ocupados. En relación con lo anterior, es pertinente señalar que según el DANE una persona ocupada es aquella que cumplió, durante la semana de referencia de la encuesta, al menos una de estas condiciones: trabajó al menos una hora en una actividad económica remunerada, trabajó al menos una hora de forma no remunerada en una empresa o negocio familiar o cuenta con un empleo, pero no trabaja temporalmente por algún concepto de permiso o licencia. 
+
+De la misma manera y en concordancia con estudios previos, se decidió trabajar con el siguiente conjunto de variables:
+\begin{itemize}
+\item Salario real por hora (usual) en la ocupación principal incluyendo comisiones y propinas (y\_salary\_m\_hu), variable propuesta para ser la dependiente del estudio, pues captura los ingresos salariales por hora de un individuo en pesos colombianos. 
+\item Sexo (sex =1 hombre; =0 mujer), permite reconocer las diferencias significativas en la remuneración laboral entre hombres y mujeres, por lo que esta puede ser de utilidad para explicar la variable dependiente.
+\item Edad (age), se seleccionó porque se reconoce que la edad tiene un factor y un componente proxi a la experiencia laboral.
+\item Calidad del empleo (formal = 1 cuenta con acceso a seguridad social; = 0 cualquier otro). Esta variable permite apreciar la diferencia entre la calidad del empleo y su relación con la remuneración laboral de los individuos. 
+\item Máximo nivel de educación alcanzado (maxEducLevel), categorías: (1) ninguno, (2) preescolar, (3) primaria incompleta, (4) primaria completa, (5) secundaria incompleta, (6) secundaria completa y (7) educación superior. Se escogió ya que desde la teoría del capital humano se postula que mayores niveles de educación se traducen en mayores ingresos de los individuos.
+\item Tamaño de la firma (sizeFirm), categorías: (1) autónomo, (2) 2-5 trabajadores, (3) 6-10 trabajadores, (4) 11-50 trabajadores y (5) mayor a 50 trabajadores. Se seleccionó en la medida que permite apreciar el efecto o relación que puede existir entre el tamaño de la empresa y el salario de sus trabajadores.
+\item Tipo de ocupación (relab), categorías: (1)	Obrero o empleado de empresa particular, (2)	Obrero o empleado del gobierno, (3)	Empleado doméstico, (4) Trabajador por cuenta propia, (5)	Patrón o empleador, (6)	Trabajador familiar sin remuneración, (7)	Trabajador sin remuneración en empresas o negocios de otros hogares, (8)	Jornalero o peón y (9) Otro. Ayuda a capturar cómo los diferentes tipos de ocupación pueden incidir en el tipo de remuneración salarial que puede llegar a tener una persona.
+\end{itemize}
+
+Una vez establecidas las variables del estudio, se procedió a inspeccionar la cantidad de valores faltantes de las mismas, se detectaron 6650 observaciones con valores faltantes para \texttt{y\_salary\_m\_hu} y 1 para maxEduclevel. Debido a la gran cantidad de datos que representan en proporción a la totalidad la muestra y en aras de no crear sesgos significativos en las estimaciones de los modelos, se decidió eliminar las observaciones con valores faltantes de la base de datos. Como resultado, la base de datos en su versión definitiva cuenta con 9891 observaciones.
+
+No obstante, se reconoce que esta decisión limitó la profundidad del análisis en la variable tipo de ocupación (relab), ya que la eliminación de valores faltantes redujo considerablemente la cantidad de categorías con datos suficientes para el estudio. Sin embargo, dado que las categorías de obrero o empleado de empresa particular (1), obrero o empleado del gobierno (2) y empleado doméstico (3) aún contaban con más de 500 observaciones, se optó por enfocar el análisis en estos grupos.
+
+\subsection{Estadística descriptiva}
+Con el objetivo de una mayor comprensión del comportamiento de los datos en las variables de interés, en esta subsección se desarrolla un análisis descriptivo de los datos de las mismas. Esto incluye tablas que resumen los estadísticos principales de cada variable, así como gráficos que indican la distribución de las mismas y dan luces sobre las relaciones importantes respecto a la variable dependiente, el salario real por hora usual. 
+
+\input{views/tabla_resumen}
+
+Así pues, el cuadro 1 ilustra los principales estadísticos de las variables continuas. los cuales indican que la muestra se compone en promedio de personas que tienen una edad media de 36 años y perciben un salario por hora de 7,946 pesos.
+No obstante, cabe resaltar que para todas las variables existen valores  en sus minimos y maximos que se alejan considerablemente de sus medias y medianas, lo que junto con sus respectivas desviaciones estándar, evidencia una alta varianza en los datos. Un rasgo interesante en los datos es que para \texttt{y\_salary\_m\_hu} su media es significativamente diferente de su mediana lo que sugiere que la distribución de los datos no es simétrica, por ende no se puede asumir normalidad. En relación con lo anterior, la figura 1 exhibe el gráfico de la distribución de \texttt{y\_salary\_m\_hu} y su forma logarítmica, como se puede ver la variable sin transformar tienen una una alta concentración de datos en los niveles más bajos de ingreso, mientras que exhibe una cola derecha muy extensa a medida que  aumentan los ingresos. Esto refleja la desigualdad en los salarios por hora y justifica el uso de la variable transformada mediante la aplicación del logaritmo para la elaboración de las regresiones lineales y otros análisis entre variables.
+
+\begin{figure}[H]  
+    \centering
+    \includegraphics[width=0.7\textwidth]{views/Histogramas Taller 1 Big data ML.png} % Ajusta el tamaño
+    \caption{Distribución de los ingresos salariales.}
+    \label{fig: Gráfico 1}  % Etiqueta opcional para referencias
+\end{figure}
+
+Por otro lado, en el cuadro 2 se exponen los principales estadísticos de las variables cualitativas por categoría, lo cual permite tener una mayor comprension respecto a la distribucion de los datos por variable entre las disntias categorias, asi como la media del salario real por hora de cada una y el porcentaje de personas que se enuctran entre el primer y el tercer cuartil de la distribucion de la variable dependiente. 
+De igual manera, con base en la información del cuadro 2, se puede afirmar que la mayoría de las personas en la muestra tienen un empleo informal. Más de la mitad ha alcanzado, como máximo nivel educativo, la educación superior o la secundaria completa. Asimismo, la mayoría de los individuos son obreros o empleados de empresas particulares y más de la mitad trabaja en empresas con más de 50 trabajadores. Estos resultados reflejan la realidad colombiana, donde el empleo informal es predominante. Sin embargo, es sorprendente la alta proporción de personas con educación superior, considerando que el acceso a esta sigue siendo relativamente limitado en el país. Otro aspecto relevante es que cerca del 50 por ciento de las personas empleadas trabajan en medianas y pequeñas empresas, lo que también se alinea con la estructura del mercado laboral colombiano, en el que estas empresas son el principal generador de empleo.
+
+\input{views/extended_table}
+
+Desde la perspectiva del salario real por hora según cada categoría, es importante mencionar que los trabajadores formales presentan un salario promedio más del doble que el de los trabajadores informales. Esto ayuda a comprender la importancia en términos de ingreso de la creación del empleo formal. En cuanto al nivel educativo alcanzado, se observa que, a medida que aumenta la educación, también lo hacen los ingresos salariales. De manera notable, el salario medio de quienes tienen educación superior es aproximadamente tres veces mayor que el de las demás categorías. Por otro lado, al analizar la variable de tipo de ocupación, los trabajadores del gobierno presentan el salario promedio más alto, casi el doble en comparación con los empleados de empresas privadas.
+
+Por otro lado, al analizar la proporción de observaciones de las variables categóricas que se encuentran dentro del rango intercuartílico del salario, se evidencia una alta dispersión en los datos, lo que sugiere la posible presencia de valores atípicos. Esto motivó la construcción de las figuras 2 y 3, las cuales presentan diagramas de cajas y bigotes para diversas variables categóricas en relación con la distribución del logaritmo del salario.
+
+Estas figuras permiten visualizar de manera más ilustrativa las particularidades previamente señaladas en el análisis del cuadro 2. No obstante, en lo que respecta a la distribución en sí, se observa que cada categoría exhibe una cantidad significativa de observaciones tanto en niveles salariales altos como bajos, reflejado en la extensión de los bigotes del gráfico. Sin embargo, dado que los datos analizados corresponden a condiciones reales de individuos y capturan escenarios de desigualdad propios del país, se optó por trabajar con los datos sin aplicar técnicas de transformación o  \textit{winsorization}.
+
+Como medida adicional, y con el objetivo de aportar mayor robustez al análisis, en cada gráfico se incluye el valor  \textit{p} de la prueba de Kruskal-Wallis, utilizada para evaluar diferencias estadísticas entre categorías. Los resultados indican que, para todas las variables representadas en las figuras, se debe rechazar la hipótesis nula, lo que evidencia la existencia de diferencias estadísticamente significativas entre los grupos analizados.
+
+\begin{figure}[H]  
+    \centering
+    \includegraphics[width=0.7\textwidth]{views/Sexo y situacion laboral.png} % Ajusta el tamaño
+    \caption{Distribución del logaritmo de los ingresos salariales por hora de acuerdo al sexo y la situación laboral .}
+    \label{fig: Gráfico 2}  % Etiqueta opcional para referencias
+\end{figure}
+\begin{figure}[H]  
+    \centering
+    \includegraphics[width=0.7\textwidth]{views/EDUC FIRMA.png}
+    \caption{Distribución del logaritmo de los ingresos salariales por nivel de educación y tamaño de la firma.}
+    \label{fig: Gráfico 3}  % Etiqueta opcional para referencias
+\end{figure}
+
+
+\section{Edad en el salario}
+
+{Para analizar como evoluciona el salario con la edad se estimo la siguiente regresi\'on: }
+
+\begin{equation}
+\label{eq:age_wage}
+    log(w)= \beta_1+\beta_2age+\beta_3age^2+u
+\end{equation}
+
+\input{views/age_wage_reg}
+
+{Los resultados de la estimaci\'on de la ecuaci\'on \ref{eq:age_wage} se presentan en la tabla \ref{tab:age_wage_reg}, si bien la regresi\'on estimada en este punto solo se puede interpretar en t\'erminos de correlaciones por la presencia de endogeneidad, los resultados siguen siendo \'utiles para entender c\'omo el salario evoluciona con la edad.} 
+
+{Comenzamos analizando los coeficientes, la constante del modelo no tiene mayor interpretaci\'on econ\'omica ya que este valor (exponenciado) representa el salario por hora cuando $age=0$. El coeficiente asociado con la edad ($age$) tiene magnitud positiva lo que indica que el salario crece a medida que las personas se hacen mayores, particularmente, en promedio un aumento de un año de edad incrementa el salario en $(e^{0.060}-1)=6.18\%$. El coeficiente negativo asociado a la variable $age^2$ nos dice que el efecto de la edad sobre el salario se va disminuyendo a medida que la edad aumenta (se tienen rendimientos marginales decrecientes) lo que implica que la funci\'on es c\'oncava. La estimaci\'on arroja que ambos coeficientes son significativos tanto individual como conjuntamente al 99.99\% de confianza, lo que quiere decir que las variables $age$ y $age^2$ estan relacionadas con el salario en la muestra y son \'utiles para la explicar la variaci\'on en esta \'ultima variable ya que podemos rechazar la hip\'otesis nula de que $\beta_2=\beta_3=0$ con un alto grado de confianza. El ajuste del modelo a los datos no es muy bueno con un $R^2 = 0.039$ lo que implica que las variables utilizadas solo explican el 4\% de la variaci\'on del logaritmo del salario. Para tener un mejor ajuste se deber\'ian considerar modelos m\'as complejos con un mayor n\'umero de variables lo que tambi\'en permitir\'ia mitigar los problemas de endogeneidad.} \\
+
+{Para encontrar la edad en la que se m\'aximiza el salario se derivo la ecuacio\'on \ref{eq:age_wage} respecto a la edad, se igualo a 0 y se despejo $age$: }
+
+\begin{align*}
+    \frac{\partial ln(w)}{\partial age}=\beta_2+2\beta_3age &= 0 \\
+    age &= -\frac{\beta_2}{2\beta_3}
+\end{align*}
+
+{Reemplazando los valores estimados se obtiene: }
+
+\begin{align*}
+    \tag{Peak Age}
+    age &\approx -\frac{\hat{\beta}_2}{2\cdot\hat{\beta}_3} \approx 46
+\end{align*}
+
+{Lo que implica que en promedio las personas con 46 años son quienes tienen salarios m\'as altos, y posterior a esta edad el salario comienza a decrecer por los rendimientos marginales decrecientes. Esto se evidencia en la figura \ref{fig:perfilsalario} en la que se muestra los pron\'osticos del modelo, con su respectivo intervalo de confianza al 95\%. En la gr\'afica se ve tambi\'en la edad en la que se m\'aximiza el salario con un intervalo del 95\% denotado por las lineas rojas calculado usando el m\'etodo de bootstrap, los valores estimados por este me\'etodo tuvieron un erorr standard de 0.83, lo cual es relativamente pequeño comparado con la media (46) y se ve reflejado en el pequeño intervalo de confianza, siendo esto una señal de que nuestro pron\'ostico de la edad pico es significativo y confiable. La figura muestra la relaci\'on concava entre la edad y salario, con una primera tendencia creciente antes de los 46 años y una posterior tendencia decreciente despu\'es de esta edad.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{views/perfil_edad_salario.png}\
+    \caption{Perfil Edad - Salario}
+    \label{fig:perfilsalario}
+\end{figure}
+
+\section{Genero en el salario}
+
+\subsection{Modelo 1: Brecha salarial incondicional}
+
+Ahora bien, el tema de la igualdad de género ha sido una problemática que ha venido evolucionando y mejorando con el paso del tiempo. Sin embargo, hasta la fecha, aún se pueden seguir viendo discrepancias en cuanto al trato equitativo entre la mujer y el hombre en diferentes aspectos, como lo es la diferencia salarial. 
+
+Esta brecha salarial puede ser estimada de diferentes maneras. Para empezar, vamos a realizar una regresión simple del logaritmo del salario sobre un indicador de variable de género. Específicamente, vamos a estimar el siguiente modelo: 
+
+\begin{equation}
+\label{eq:ols}
+    log(w)= \beta_0 + \beta_1 mujer+u
+\end{equation}
+
+El modelo se compone por el logaritmo del salario por hora como la variable dependiente, y una variable independiente indicativa "mujer" que toma el valor de 1 cuando el sexo de la persona es femenino y 0 cuando es masculino. En este caso, el coeficiente de interés es el $\beta_1$ ya que nos da brinda aproximación de la brecha salarial de género en promedio sin tener en cuenta otras variables que pueden estar afectando esta brecha. 
+
+\begin{table}[!htbp] \centering 
+  \caption{Brecha salarial de genero: Condicionado y FWL Bootstrap} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{3}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-4} 
+\\[-1.8ex] & \multicolumn{2}{c}{Log Wage} & resid\_lw \\ 
+\\[-1.8ex] & (1) & (2) & (3)\\ 
+\hline \\[-1.8ex] 
+ mujer & $-$0.045$^{***}$ & $-$0.088$^{***}$ &  \\ 
+  & (0.015) & (0.012) &  \\ 
+  & & & \\ 
+ resid\_mujer &  &  & $-$0.088$^{***}$ \\ 
+  &  &  & (0.000) \\ 
+  & & & \\ 
+ Constant & 8.641$^{***}$ & 5.759$^{***}$ & $-$0.000 \\ 
+  & (0.010) & (0.049) & (0.012) \\ 
+  & & & \\ 
+\hline \\[-1.8ex] 
+Observations & 9,891 & 9,891 & 9,891 \\ 
+R$^{2}$ & 0.001 & 0.319 & 0.005 \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{3}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+De acuerdo a la \textit{tabla 4}, podemos ver que para una muestra de 9891 personas, nuestro coeficiente de interés es de -0.045 que es estadísticamente significativo al 1\%. En otras palabras, su interpretación sería que, en promedio y dejando todo lo demás constante, las mujeres de la muestra ganan 4.5\% menos que los hombres. Por otra parte, el valor de 8.641 es la constante que indica el promedio del logaritmo salarial de los hombres de la muestra. Por último, tenemos un \( R^2 \) muy pequeño de 0.001, el cual nos dice que el modelo no explica de manera adecuada la variable dependiente, ya que solo explica la variación en el logaritmo del salario aproximadamente 1\%. Se podría decir que, el  resultado se encuentra dentro de lo normal, teniendo en cuenta que hay otras variables que influyen positiva y negativamente en los ingresos de una persona además del género (estudio, experiencia, oficio, edad, entre otras). En conclusión, aunque el modelo no esté bien especificado, podemos decir, gracias a $\beta_1$, que sí existe una brecha salarial negativa para las mujeres. 
+
+\subsection{Modelo 2 y 3: Brecha salarial con controles y FWL}
+En el anterior modelo pudimos evidenciar la existencia de una brecha salarial negativa para las mujeres de la muestra, sin embargo, no tuvimos en cuenta diferentes características que pueden hacer variar el logaritmo del ingreso de una persona. En esta subsección, nos vamos a enfocar en analizar el cambio que hay cuando se le adicionan más variables a la regresión. 
+
+La frase con la que empieza esta sección "Pago igual por un trabajo igual" trae consigo un mensaje enfocado al reconocimiento equitativo para las personas que tienen un perfil profesional y laboral idéntico, dejando en claro que la brecha salarial de género no tendría porqué existir. 
+
+Ahora bien, para poder hacer un análisis con mayor profundidad del tema, vamos a hacer nuevamente una estimación del salario logarítmico por hora de las personas, pero esta vez vamos a controlar por variables que pueden llegar a capturar de manera más adecuada la variación en la variable dependiente. 
+
+Para este modelo, vamos a utilizar como controles las variables: "maxEducLevel" (la cual captura el nivel educativo de los individuos), "relab" (la cual habla acerca del tipo de oficio al que se dedica el individuo), "formal" (nos da información sobre si la persona trabaja en un trabajo formal o informal), "sizeFirm" (nos dice el número de trabajadores que conforman la compañía) y la variable sociodemográfica "age" la cual índica la edad de las personas. La razón por la que se escogieron estas variables, es porque logran capturar las características esenciales que pueden representar cambios en los niveles de ingreso, permitiéndonos así estimar la brecha salarial condicional teniendo en cuenta factores que varían dependiendo del ámbito laboral y del trabajador. 
+Teniendo esto en cuenta, el modelo quedaría de la siguiente manera: 
+
+
+\begin{multline}
+\log(w) = \beta_0 + \beta_1 mujer + \beta_2 maxEducLevel + \beta_3 relab + \\
+\beta_4 formal + \beta_5 sizeFirm + \beta_6 age + u
+\end{multline}
+
+
+Por otra parte, partiendo de este mismo modelo, se realiza nuevamente la estimación de la brecha salarial de género condicionada mediante el teorema de Frisch-Waugh-Lovell (FWL), el cual nos da la ventaja de apartar por un momento los efectos que tienen las variables de control previo a estimar el efecto de género en los ingresos. Para esto, se deben seguir los siguientes pasos: 
+
+1. Hacer la regresión del logaritmo del salario sobre las variables de control (excluyendo únicamente la variable "mujer"), y después, obtener los errores de este modelo, dando como resultado: 
+
+\begin{multline}
+ Resid_{log(w)}= \beta_0 + \beta_1 maxEducLevel + \beta_2 relab + \beta_3 formal + \\
+ \beta_4 sizeFirm + \beta_5 age + u 
+\end{multline}
+2. Así mismo, se hace la regresión de la variable "mujer" sobre los controles y, nuevamente, obtenemos el error del modelo, dando como resultado:
+
+\begin{multline}
+ Resid_{mujer}= \beta_0 + \beta_1 maxEducLevel + \beta_2 relab + 
+\beta_3 formal + \\
+\beta_4 sizeFirm + \beta_5 age + u 
+\end{multline}
+
+3. Por último, se regresa los errores del logaritmo del salario sobre los errores de la variable indicativa de mujer. 
+\begin{equation}
+\label{eq:ols}
+    ModeloFWL = Reg (Resid_{log(w)} -> Resid_{mujer})
+\end{equation}
+
+Al final del procedimiento, vamos a obtener la brecha salarial de género condicional, habiendo controlado por las características del trabajador y el trabajo. 
+De esta manera, la \textit{tabla 4} refleja los resultados esperados de dicho proceso, del modelo condicionado y del modelo sin condicionar.
+
+
+De acuerdo a los resultados, podemos decir que el teorema se cumple ya que, la brecha salarial de género, en promedio y dejando todo lo demás constante, es de -0.088 en ambos casos. En otras palabras, después de haber controlado por variables que capturaban características importantes laborales, las mujeres, en promedio, ganan un 8.8\% menos que los hombres. Los resultados de los modelos son estadísticamente significativos con un nivel del 1\% y, podemos observar, que el \( R^2 \) es considerablemente mayor en el modelo condicionado que en el modelo no condicionado y el FWL. Este resultado es curioso y poco intuitivo. En primer lugar, se esperaría que controlando por variables que acogen características netamente del trabajo y de la firma, la brecha disminuyera. No obstante, analizando más a detalle los datos pudimos darnos cuenta que hay una disparidad significativa en las variables a la hora de hacerla comparación entre hombres y mujeres. De acuerdo con lo anterior, se optó por la realización de una prueba de diferencia de medias (t test) con el fin de poder observar las diferencias de género en las diferentes variables que componen el modelo y así comprender el porqué del aumento de esa brecha en lugar de la disminución. De esta manera obtuvimos los siguientes resultados: 
+
+\begin{table}[htbp]
+    \centering
+    \caption{Resultados de la Prueba t de Welch: Empleo Formal, Tamaño de Empresa y Nivel Educativo por Género}
+    \label{tab:t_test_formal_size_education}
+    \begin{tabular}{lccc}
+        \hline
+        Estadístico & Empleo Formal & Tamaño de Empresa & Nivel Educativo \\ 
+        \hline
+        t-Statistic & 3.7221 & 9.5441 & -7.9354 \\ 
+        Grados de Libertad (df) & 9855.7 & 9478.6 & 9886.1 \\ 
+        p-value & 0.0001987 & < 2.2e-16 & 2.327e-15 \\ 
+        IC 95\% (Inferior) & 0.01496 & 0.2026 & -0.2194 \\ 
+        IC 95\% (Superior) & 0.04826 & 0.3074 & -0.1325 \\ 
+        Media (Hombres) & 0.7832 & 4.0483 & 6.0107 \\ 
+        Media (Mujeres) & 0.7516 & 3.7933 & 6.1866 \\ 
+        \hline
+    \end{tabular}
+\end{table}
+
+En la \textit{tabla 6}, se puede observar el t-estadístico, el p-valor y la media de hombres y mujeres para las variables indicadas en la parte superior. Esta prueba consistió en proponer una hipótesis nula que afirmaba que no había una diferencia en las medias en las variables de acuerdo al género, así mismo, la hipótesis alternativa afirmaba que si existía una diferencia estadísticamente significativa en las medias. 
+Partiendo de lo anterior, podemos evidenciar que, en los tres casos, el p-valor es mucho menor a 0.05, por lo tanto podemos rechazar la hipótesis nula y afirmar que hay una diferencia de media significativa en estos tres casos. En primera instancia, al analizar las medias de los géneros en la variable "Formal", nos podemos percatar de que, en promedio, los hombres tienen una mayor proporción de empleo formal con un 78.3\% mientras que la mujer cuenta con un 75.1\% en este tipo de empleo. De la misma manera, cuando analizamos los resultados de la variable "sizeFirm", referente al tamaño de la empresa, podemos observar que, los hombres pertenecen a empresas más grandes (11 - 50 trabajadores) en promedio, mientras que las mujeres pertenecen a empresas más pequeñas (6 - 10 trabajadores). El resultado visto en estas dos primeras variables, nos puede empezar a dar indicios de porqué cuando agregamos los controles al modelo, la brecha salarial por hora aumentó en vez de disminuir. En otras palabras, los hombres al pertenecer en mayor proporción a trabajos formales y a firmas más grandes podrían llegar a recibir sueldos horarios mayores que las mujeres. No obstante, cabe aclarar que en la tercera variable "maxEducLevel" que hace referencia al nivel educativo de las personas, las mujeres cuentan con estudios más avanzados que los hombres, afirmando que las mujeres en promedio cuentan con estudios de secundaria completa (nivel 6), superando la media de los hombres por muy poco. Sin embargo, aunque logren superar la media de género, los hombres no se quedan atrás ya que, en promedio, los hombres también llegan a tener estudios de secundaria completa, haciendo muy pareja esa diferencia de medias educativas entre hombre y mujer. Esto podría llegar a reflejar el hecho de que, aunque las mujeres cuenten con la misma o incluso mayor educación que los hombres, estos se ven mejor retribuidos en el salario que las mujeres. Lo anterior, teniendo en cuenta que, en el modelo condicionado, un mayor nivel educativo se ve reflejado con un aumento del ingreso por hora del 25.4\%
+De acuerdo al análisis anterior, se podría decir que el aumento en la brecha salarial de género presentado en el modelo condicionado, puede ser gracias a las diferencias laborales entre hombres y mujeres, específicamente, en diferencias que tengan que ver con el tipo de trabajo (formal e informal) y,también, con la pertenencia a firmas más grandes o pequeñas de acuerdo al género. 
+
+
+\begin{table}[htbp] 
+    \centering
+    \begin{tabular}{lc} 
+        \hline
+        & Statistic \\ 
+        \hline
+        Error Estandar & 0.01233 \\ 
+        Error Estandar (Bootstrap) & 0.01302 \\ 
+        \hline
+    \end{tabular}
+    \caption{Errores estandar de modelos FWL}
+    \label{tab:fwl_errors}
+\end{table}
+
+Cambiando de tema, en la \textit{tabla 7} podemos ver los errores estándar que salen de la estimación de los modelos FWL y FWL con Bootstrap. En este caso, ambos errores son  similares, lo que sugiere que los errores estimados por FWL son bien estimados con el método tradicional, respaldado por el uso de bootstrap con 1.000 réplicas que confirman la estabilidad de la estimación. 
+
+Recapitulando, se ha realizado la estimación de la brecha salarial entre hombres y mujeres mediante tres diferentes modelos. En primer lugar, se realizó la estimación del modelo incondicionado, donde la única variable explicativa era un indicador de género. El resultado obtenido de esta regresión fue la presencia de una brecha salarial entre hombres y mujeres, dejando en evidencia que la mujer gana en promedio 4.5\% menos en el salario por hora que un hombre. 
+En segundo lugar, se llevo a cabo la estimación del modelo condicionado. Este modelo contaba con las variables explicativas: "maxEducLevel", "relab", "formal", "sizeFirm" y "age", las cuales fueron utilizadas como controles con el fin de poder capturar características importantes del trabajador y de la firma. El resultado del modelo fue, principalmente, la persistencia y el aumento de la brecha salarial de género, aumentando de 4.5\% a 8.8\%. Hacer el análisis con este tipo de controles aumenta significativamente la confiabilidad del modelo debido a que logra identificar posibles afectaciones en los ingresos de las personas, teniendo en cuenta características personales de cada una de ellas. Por ejemplo, el hecho de que la persona pertenezca o no a un trabajo formal o informal (formal), tiene un peso importante a la hora de estimar el modelo debido a que, los trabajadores vinculados a un tipo de trabajo formal pueden llegar a ganar sueldos diferentes que las personas que trabajan en el sector informal. Así mismo, el nivel educativo del individuo (maxEducLevel), por lo general, también puede llegar a generar variabilidad en los ingresos en las personas con mayores estudios, suponiendo así otro efecto individual capturado en el modelo. Por otra parte, el número de personal de la firma (SizeFirm) también puede llegar a generar variaciones en los ingresos del personal dependiendo si es una empresa grande, mediana o chica. Con la inclusión de estos controles, hubo un aumento sustancial en la brecha salarial horaria de género del 4.3\%.
+Por último, el tercer modelo consistió en hacer la estimación del modelo condicionado pero con la regresión de los residuales del logaritmo del salario horario sobre los residuales de la variable categórica de género. En este caso, el resultado de la estimación dio idéntico al resultado del caso condicionado, dando así la validación del teorema de Frisch-Waugh-Lovell (FWL), y rectificado con el método bootstrap al comprar los errores estándar de ambos modelos. 
+
+
+\begin{table}[!htbp] 
+    \centering 
+    \caption{Edad pico de ingreso de acuerdo al sexo} 
+    \label{tab:peak_age} 
+    \begin{tabular}{lccc} 
+        \toprule
+        Sexo & Peak Age & 95\% IC Inferior & 95\% IC Superior \\ 
+        \midrule
+        Hombre & $49.36$ & $46.86$ & $52.85$ \\ 
+        Mujer & $43.02$ & $41.62$ & $44.84$ \\ 
+        \bottomrule
+    \end{tabular} 
+\end{table}
+Continuando con el análisis, ahora nos enfocaremos en analizar el comportamiento de los salarios conforme la edad y el género de las personas. En el \textit{tabla 8}, podemos ver las edades en donde, por lo general, las personas suelen recibir el mayor ingreso por hora. Si nos fijamos más a detalle, podemos ver que los hombres tienen su mayor ingreso cuando están cercanos a los 49 años, con una desviación en el rango de 47 a 53 años aproximadamente. Por otro lado, las mujeres llegan a tener sus mayores ingresos por hora cuando se acercan a los 43 años, con una desviación en el rango de 42 a 45 años aproximadamente. Así mismo, podemos ver que la diferencia en las edades pico de hombres y mujeres es bastante notable, más aún, teniendo en cuenta que los intervalos de confianza en las edades no se superponen uno sobre el otro. Además, los resultados también sugieren que los hombres tienen un periodo más grande donde maximizan sus ingresos (cerca a los 6 años), posiblemente debido a su progreso laboral y pocas interrupciones laborales. Mientras que, el periodo de las mujeres es prácticamente la mitad que el de los hombres (cerca a los 3 años), esto posiblemente causado por barreras estructurales evidenciadas en el ámbito laboral o, también, por cuestiones maritales/parentales que afectan su potencial de ingresos vista en el largo plazo. 
+Estas diferencias salariales de acuerdo a la edad, sugieren que la brecha de género no puede ser vista únicamente desde las características de la persona o de la firma. Al contrario, estas diferencias nos sugieren que hay causas estructurales más complejas que pueden afectar las dinámicas salariales dependiendo del género de la persona. Para ejemplificar lo anterior, podemos decir que, para los hombres, su edad pico más tardío puede ser gracias a la acumulación de experiencia laboral en la compañía o en diferentes cargos, dando la oportunidad de adquirir puestos con mejor remuneración a una edad más avanzada. De manera similar, el pico salarial temprano antes de la caída experimentado por las mujeres, puede ser gracias a diferentes desafíos sociales (discriminación salarial, dificultad para recibir aumentos, entre otras), que le impiden mantener ingresos superiores a medida que avanza su edad. 
+
+
+Por último, se realizaron las predicciones salariales de acuerdo al género y a la edad de las personas en la muestra. En la \textit{figura 5} podemos identificar las tendencias generales sobre el ingresos discutidas anteriormente en el análisis. Para empezar, podemos confirmar visualmente la brecha salarial entre hombres y mujeres. La curva hombres (naranja) está consistentemente por encima que la curva de las mujeres (verde), lo que indica que, en promedio, los hombres tienen mayores ingresos por hora que las mujeres en la mayoría de las edades, ya que a los 18 años, se puede apreciar visualmente que los ingresos de las mujeres superan apenas el ingreso de los hombres. Además, ambas curvas tiene una forma cóncava, donde inicialmente es creciente y luego decreciente, lo que implica que los salarios aumentan marginalmente hasta cierta edad (edad pico) y después empiezan a descender. Ahora bien, las líneas verticales continuas representan la edad pico de los hombres (azul) y la edad pico de las mujeres (rojo), así mismo, las líneas discontinuas marcan los intervalos de confianza de cada uno acorde al mismo color. Analizando la línea predictiva de las mujeres, podemos ver que, en primer lugar, experimentan un pico más temprano en alcanzar sus ingresos más altos, junto con una menor variación en la edad donde tienen mayores ingresos. En segundo lugar, tienen un decaimiento más rápido en sus ingresos, esto puede ser explicado por una mayor probabilidad en experimentar un estancamiento o reducción de sus ingresos conforme envejecen, dejando de lado la importancia que tiene el nivel de experiencia adquirido o la permanencia en la firma. Por el contrario, los hombres tienen un rango de edad más grande donde continua su crecimiento salarial, y después experimentan un decaimiento mas suavizado en sus ingresos por hora, dándoles una mayo estabilidad en su trayectoria salarial.
+
+\begin{figure}[H]  
+    \centering
+    \includegraphics[width=0.8\textwidth] {Log salario por género.png} % Ajusta el tamaño
+    \caption{Predicción logarítmica del salario por hora de acuerdo al género .}
+    \label{fig: Gráfico 2}  % Etiqueta opcional para referencias
+\end{figure}
+
+Ahora bien, la \textit{figura 6} tiene en cuenta el salario por hora en pesos limitado a 8.000 COP, con el fin de poder interpretar y ver mejor las curvas de predicción de los ingresos. En este gráfico podemos evidenciar, principalmente, los mismos patrones descritos en la anterior imagen gracias a la exclusión de valores atípicos, que permiten una mejor visualización de los datos. Lo nuevo que nos permite la figura es poder dar una interpretación mas detallada de los salarios por hora de ambos géneros y apreciar aún mejor la brecha salarial. En este caso, podemos ver que la mujer, en su edad pico, recibe aproximadamente un ingreso por hora de 6.000 COP, mientras que el hombre, en su edad pico, recibe un ingreso por hora cercano a los 7.000 COP. También, podemos ver con más claridad la rápida y temprana caída  de los ingresos de la mujer, aumentando de manera considerable la brecha salarial con los años. En conclusión, podemos decir que el estar en edad de trabajar no necesariamente se ve reflejado en un aumento de los ingresos constante, especialmente si se es mujer debido a los impedimentos y desafíos estructurales que retrasan y limitan el crecimiento salarial.
+
+\begin{figure}[H]  
+    \centering
+    \includegraphics[width=0.8\textwidth]{Predicción salario por hora por género.png} % Ajusta el tamaño
+    \caption{Predicción del salario por hora de acuerdo al género.}
+    \label{fig: Gráfico 2}  % Etiqueta opcional para referencias
+\end{figure}
+
+
+
+
+\section{Predicción de Ingresos}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		  Referencias				  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+En estudios previos se ha demostrado la efectividad de modelos predictivos en diversas áreas \cite{ferrer2019, echavarria2022}.
+
+
+\bibliography{Referencias} 
+
+% Nueva página después de las referencias
+%\newpage
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%		  TABLES				  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section*{Tables and Figures}
+
+%\pagebreak
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   APPENDIX	 Tables	        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\pagebreak
+%\appendix
+%\renewcommand{\theequation}{\Alph{chapter}.\arabic{equation}}
+
+%\setcounter{figure}{0}
+%\setcounter{table}{0}
+%\makeatletter 
+%\renewcommand{\thefigure}{A.\@arabic\c@figure}
+%\renewcommand{\thetable}{A.\@arabic\c@table}
+
+%\section{Appendix: Tables and Figures}\label{sec:appendix_tables} 
+
+\end{document}
