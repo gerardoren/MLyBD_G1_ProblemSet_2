@@ -1,8 +1,21 @@
-# Unlocking-Amenities
-Replication files for "Unlocking Amenities" by Albouy, Christensen, and Sarmiento-Barbieri 
+# ML & BD Problem Set 2: Predicting Poverty
+Nicolas Lozano Huertas, Andres Gerardo Rendon, Samuel Narváez Muñoz & Jhan Camilo Pulido
 
-## Abstract
+## Descripción
 
-Public goods may exhibit complementarities that are essential for determining their individ- ual value. Our results indicate that improving safety near parks can turn them from public bads to goods. Ignoring complementarities may lead to i) undervaluing the potential value of public goods; ii) overestimating heterogeneity in preferences; and iii) understating the value of public goods to minority households. Recent reductions in crime have “unlocked” $5.5 billion in property value in Chicago, New York and Philadelphia. Still over half of the potential value of park proximity (over $10.5 billion) remains locked in.
+Este repositorio contiene los Scripts con los modelos utilizados para predicir pobreza a nivel hogar, con datos de la GEIH como desarrollo del Problem Set 2 de la 
+clase de Machine learning y big data para economía aplicada.
 
+## Estructura
+
+- scripts: Contiene todos los codigos de R con los modelos
+  - El script "01_Organizar_Datos_Crear_Funciones.R" debe correrse primero. Aqui se hace pre-procesamiento de los datos, se cargan los paquetes y se crean funciones que se utilizan en los modelos.
+  - Modelos_Esperimentacion: Contiene modelos de prueba.
+  - Modelos_Principales: Contiene los modelos con los mejores resultados (F-Score más alto) en Kaggle.
+- stores: Aquí seguardan los datos.
+  - raw: En esta carpeta se deben dejar los datos "crudos". Debido al peso de los archivos no se pudieron dejar en el repositorio.
+  - work: Aquí se guardan las bases de datos despues del pre-procesamiento.
+  - sub: En esta carpeta quedan los archivos en formato para ser enviados a kaggle.
+- views: Aquí quedan guardados imagenes y figuras relevantes para el desarrollo del PS.
+- document: En esta carpeta se puede encontrar el PDF con todo el desarrollo del taller.
 
