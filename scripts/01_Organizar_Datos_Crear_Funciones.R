@@ -1,3 +1,6 @@
+## ---- Limpiar Entorno ----
+rm(list=ls())
+
 # install and load required packages
 Packages <- c("tidyverse", 
               "ggplot2", 
@@ -33,57 +36,161 @@ invisible(lapply(Packages, function(pkg) {
     install.packages(pkg)}
   library(pkg, character.only = TRUE)}))
 
-# Recolección de los datos:
-train_hogares<-read.csv("C:\\Users\\samue\\OneDrive\\Escritorio\\Economia\\Big Data y Machine Learning\\Taller 2\\DATOS\\train_hogares.csv")
-train_personas<-read.csv("C:\\Users\\samue\\OneDrive\\Escritorio\\Economia\\Big Data y Machine Learning\\Taller 2\\DATOS\\train_personas.csv")
-test_hogares<-read.csv("C:\\Users\\samue\\OneDrive\\Escritorio\\Economia\\Big Data y Machine Learning\\Taller 2\\DATOS\\test_hogares.csv")
-test_personas<-read.csv("C:\\Users\\samue\\OneDrive\\Escritorio\\Economia\\Big Data y Machine Learning\\Taller 2\\DATOS\\test_personas.csv")
+## ---- Cargue de Datos ----
+train_hogares<-read.csv("stores\\raw\\train_hogares.csv")
+train_personas<-read.csv("stores\\raw\\train_personas.csv")
+test_hogares<-read.csv("stores\\raw\\test_hogares.csv")
+test_personas<-read.csv("stores\\raw\\test_personas.csv")
 
-##-----------------------------------------------------------------------------##
+## ---- Renombramos variables ----
+rename_data_hogares <- function(data, train){
+  data <- data %>% rename(
+    dominio=Dominio,
+    clase=Clase,
+    cuartos=P5000,
+    dormitorios=P5010,
+    tipo_vivienda=P5090,
+    cuota=P5100,
+    arriendo_proyectado=P5130,
+    arriendo=P5140,
+    no_personas=Nper,
+    no_personas_ug=Npersug,
+    linea_indigencia=Li,
+    linea_pobreza=Lp,
+    factor_expansion=Fex_c,
+    departamento=Depto,
+    factor_expansion_dpto=Fex_dpto
+  )
+  
+  if (train) {
+    data <- data %>% rename(
+      ingresos_unidad_gasto=Ingtotug,
+      ingresos_arriendo_ug=Ingtotugarr,
+      ingresos_pc_arriendo=Ingpcug,
+      pobre=Pobre,
+      indigente=Indigente,
+      numero_pobres=Npobres,
+      numero_indigentes=Nindigentes
+    )
+  }
+  return(data)
+}
 
-# organización y Pre procesamiento:
+test_hogares <- rename_data_hogares(test_hogares, F)
+train_hogares <- rename_data_hogares(train_hogares, T)
 
-# Calculo de pobreza:
-table(train_hogares$Pobre)
+rename_data_personas <- function(data, train){
+  data <- data %>% rename(
+    orden=Orden,
+    clase=Clase,
+    dominio=Dominio,
+    sexo=P6020,
+    anhos=P6040,
+    parentesco_con_jefe=P6050,
+    afiliado_salud=P6090,
+    regimen_ss=P6100,
+    max_educ=P6210,
+    grado_aprobado=P6210s1,
+    actividad_semana_pasada=P6240,
+    oficio =Oficio,
+    tiempo_trabajo=P6426,
+    ocupacion_trabajo=P6430,
+    horas_extra=P6510,
+    primas=P6545,
+    bonificaciones_month=P6580,
+    valor_bonificaciones=P6585s1,
+    incluyo_bonificaciones=P6585s2,
+    subsidio_familiar=P6585s3,
+    subsidio_educativo=P6585s4,
+    ingreso_alimentos=P6590,
+    recibe_vivienda=P6600,
+    transporte_empresa=P6610,
+    ingresos_especie=P6620,
+    prima_servicios=P6630s1,
+    prima_navidad=P6630s2,
+    prima_vacaciones=P6630s3,
+    viaticos=P6630s4,
+    bonificaciones_year=P6630s6,
+    horas_semana=P6800,
+    personal_empresa=P6870,
+    cotiza_pension=P6920,
+    otro_trabajo=P7040,
+    horas_segundo_puesto=P7045,
+    puesto_segundo_trabajo=P7050,
+    quiere_mas_horas=P7090,
+    dilig_mas_horas=P7110,
+    disp_mas_horas=P7120,
+    cambio_trabajo=P7150,
+    empezar_nuevo_puesto=P7160,
+    puesto_ultimo_trabajo_deso=P7350,
+    ingresos_trabajo_deso=P7422,
+    ingresos_trabajo_inac=P7472,
+    arriendos_pensiones=P7495,
+    pension_vejez=P7500s2,
+    pension_divorcio=P7500s3,
+    otros_ingresos=P7505,
+    remesas_nac=P7510s1,
+    remesas_int=P7510s2,
+    subsidios=P7510s3,
+    intereses_inversiones=P7510s5,
+    cesantias=P7510s6,
+    otras_fuentes=P7510s7,
+    edad_trabajar=Pet,
+    ocupado=Oc,
+    desocupado=Des,
+    inactivo=Ina,
+    factor_expansion=Fex_c,
+    factor_expansion_dpto=Fex_dpto
+  )
+  
+  if (train) {
+    
+  }
+  return(data)
+}
 
-#Podemos generar variables a nivel de hogar a partir de la base de datos de personas:
+test_personas <- rename_data_personas(test_personas, F)
+train_personas <- rename_data_personas(train_personas, T)
 
-# Realizamos el preprocesamiento para las bases de personas:
-# Creamos variables usando unformacion por persona:
+
 preproces_personas <- function(data,...){
   data<-data %>% mutate(
-    mujer = ifelse(P6020==2,1,0),
-    menor_de_edad = ifelse(P6040 <= 16, 1, 0),
-    adulto_mayor = ifelse(P6040 >= 60, 1, 0),
-    regimen_salud = ifelse(P6100==4,3,P6100),
-    regimen_salud = ifelse(is.na(regimen_salud), 3, regimen_salud),
-    EducLevel = ifelse(P6210==9,0,P6210),
-    Jefe_H = ifelse(P6050==1,1,0),
-    ocupado = ifelse(is.na(Oc),0,1),
-    desocupado = ifelse(is.na(Des),0,1),
-    Inactivo = ifelse(is.na(Ina),0,1),
-    Tipo_primer_empleo = ifelse(P6430==9,0,P6430),
+    mujer = ifelse(sexo==2,1,0),
+    menor_de_edad = ifelse(anhos <= 16, 1, 0),
+    adulto_mayor = ifelse(anhos >= 60, 1, 0),
+    regimen_salud = ifelse(regimen_ss==4,3,regimen_ss),
+    regimen_salud = ifelse(is.na(regimen_ss), 3, regimen_ss),
+    EducLevel = ifelse(max_educ==9,0,max_educ),
+    Jefe_H = ifelse(parentesco_con_jefe==1,1,0),
+    ocupado = ifelse(is.na(ocupado),0,1),
+    desocupado = ifelse(is.na(desocupado),0,1),
+    Inactivo = ifelse(is.na(inactivo),0,1),
+    Tipo_primer_empleo = ifelse(ocupacion_trabajo==9,0,ocupacion_trabajo),
     Tipo_primer_empleo = ifelse(is.na(Tipo_primer_empleo),1,Tipo_primer_empleo),
-    segundo_empleo = ifelse(P7040==1,1,0),
+    segundo_empleo = ifelse(otro_trabajo==1,1,0),
     segundo_empleo = ifelse(is.na(segundo_empleo), 0, segundo_empleo),
-    Recibio_horasextra = ifelse(P6510==1,1,0),
-    Recibio_horasextra = ifelse(is.na(Recibio_horasextra), 0, Recibio_horasextra)) %>%
-    rename(edad = P6040) %>%
+    Recibio_horasextra = ifelse(horas_extra==1,1,0),
+    Recibio_horasextra = ifelse(is.na(Recibio_horasextra), 0, Recibio_horasextra),
+    cotiza_pension = ifelse(cotiza_pension == 2, 0, 1),
+    subsidios = ifelse(subsidios==1, 1, 0)) %>%
+    rename(edad = anhos) %>%
     select(id, mujer, edad, menor_de_edad, adulto_mayor, regimen_salud, EducLevel, Jefe_H, 
            ocupado,desocupado, Inactivo,Tipo_primer_empleo,segundo_empleo,
-           Recibio_horasextra) 
+           Recibio_horasextra, subsidios, cotiza_pension, regimen_salud) 
   return(data)
 }
 
 train_personas <- preproces_personas(train_personas)
 test_personas <- preproces_personas(test_personas)
 
-# generamos variables agregadas con base personas:
+
+## ---- Agregamos Data a Nivel Hogar ----
 
 preproces_personas_agregacion <- function(data,...){
   agregacion <- data %>%
     group_by(id)%>%
     summarise(
+      num_personas = n(),
       num_mujeres = sum(mujer,na.rm = TRUE),
       num_menores = sum(menor_de_edad, na.rm = TRUE),
       num_adulto_mayor = sum(adulto_mayor, na.rm = TRUE),
@@ -92,7 +199,18 @@ preproces_personas_agregacion <- function(data,...){
       num_desocupados = sum(desocupado, na.rm = TRUE),
       num_inactivos = sum(Inactivo, na.rm = TRUE),
       num_con_segundo_empleo = sum(segundo_empleo, na.rm = TRUE),
-      num_recibieron_hrextra = sum(Recibio_horasextra, na.rm = TRUE)
+      num_recibieron_hrextra = sum(Recibio_horasextra, na.rm = TRUE),
+      
+      prop_adulto_mayor = mean(adulto_mayor, na.rm = TRUE),
+      prop_mujeres = mean(mujer, na.rm = TRUE),
+      prop_menores = mean(menor_de_edad, na.rm = TRUE),
+      prop_ocupados = mean(ocupado, na.rm =TRUE),
+      prop_desocupado = mean(desocupado, na.rm = TRUE),
+      prop_inactivos = mean(Inactivo, na.rm = TRUE),
+      prop_subsidio = mean(subsidios, na.rm = TRUE),
+      prop_pension = mean(cotiza_pension,na.rm = TRUE),
+      prop_ss = mean(regimen_salud,na.rm = TRUE),
+      meanEducLevel = mean(EducLevel, na.rm = TRUE)
     )%>%
     ungroup()
   
@@ -119,23 +237,20 @@ preproces_personas_agregacion <- function(data,...){
   return(resultado_final)
 }
 
-
 train_personas <- preproces_personas_agregacion(train_personas)
 test_personas<-preproces_personas_agregacion(test_personas)
 
-
-# generamos variables a nivel hogar con base hogar:
-
+## ---- Variables nivel hogar ----
 preproces_hogares <- function(data, ...) {
   data <- data %>%
-    mutate(arrienda = ifelse(P5090 == 3, 1, 0))
-  data$Dominio <- as.character(data$Dominio)
-  data$Dominio[data$Dominio != "RURAL"] <- "urbano"
-  data$Dominio[data$Dominio == "RURAL"] <- "rural"
-  data$Dominio <- factor(data$Dominio)
-  names(data)[names(data) == "P5010"] <- "pers_por_cuarto"
+    mutate(arrienda = ifelse(tipo_vivienda == 3, 1, 0))
+  data$dominio <- as.character(data$dominio)
+  data$dominio[data$dominio != "RURAL"] <- "urbano"
+  data$dominio[data$dominio == "RURAL"] <- "rural"
+  data$dominio <- factor(data$dominio)
+  names(data)[names(data) == "dormitorios"] <- "pers_por_cuarto"
   data <- data %>%
-    select(id, Clase, Dominio, arrienda, Nper, pers_por_cuarto, any_of("Pobre"))
+    select(id, clase, dominio, arrienda, no_personas, pers_por_cuarto, any_of("pobre"))
   
   return(data)
 }
@@ -145,6 +260,8 @@ train_hogares<-preproces_hogares(train_hogares)
 test_hogares<-preproces_hogares(test_hogares)
 
 # Unimos las bases de datos correspondientes a nivel hogar
+
+
 TRAIN <-merge(train_hogares,train_personas)
 TEST <- merge(test_hogares,test_personas)
 
@@ -152,10 +269,10 @@ TEST <- merge(test_hogares,test_personas)
 
 #convertimos las variables a formatos adecuados
 TRAIN<- TRAIN %>% 
-  mutate(Pobre=factor(Pobre,
+  mutate(pobre=factor(pobre,
                       levels=c(0,1),labels=c("No","Yes")),
-         Dominio=factor(Dominio),
-         Clase=factor(Clase),
+         dominio=factor(dominio),
+         clase=factor(clase),
          arrienda=factor(arrienda,
                          levels=c(0,1),
                          labels = c("No","Yes")),
@@ -198,8 +315,8 @@ TRAIN<- TRAIN %>%
   )
 
 TEST<- TEST %>% 
-  mutate(Dominio=factor(Dominio),
-         Clase=factor(Clase),
+  mutate(dominio=factor(dominio),
+         clase=factor(clase),
          arrienda=factor(arrienda,
                          levels=c(0,1),
                          labels = c("No","Yes")),
@@ -247,32 +364,39 @@ corrijo_na <- function(data, ...) {
     mutate(Jefe_regimen_salud= ifelse(is.na(Jefe_regimen_salud), 3, Jefe_regimen_salud))
   return(data)
 }
+
 TRAIN <- corrijo_na(TRAIN)
 TEST <- corrijo_na(TEST)
 
 
 vars_deseadas_TRAIN<- c(
-  "id", "Pobre", "Dominio", "arrienda", "Nper", "pers_por_cuarto",
+  "id", "pobre", "dominio", "arrienda", "num_personas", "pers_por_cuarto",
   "num_mujeres", "num_menores", "num_adulto_mayor", "maxEducLevel",
   "num_ocupados", "num_inactivos", "num_con_segundo_empleo",
   "num_recibieron_hrextra", "Jefe_H_mujer", "Jefe_regimen_salud",
   "Jefe_EducLevel", "Jefe_desocupado", "Jefe_Tipo_primer_empleo",
-  "Jefe_edad", "Jefe_adulto_mayor"
+  "Jefe_edad", "Jefe_adulto_mayor","Jefe_segundo_empleo", "meanEducLevel", 
+  "prop_mujeres", "prop_menores","prop_ocupados","prop_desocupado", "prop_adulto_mayor",
+  "prop_inactivos","prop_subsidio","prop_ss","prop_pension"
 )
 
 TRAIN <- TRAIN[, vars_deseadas_TRAIN]
 
 vars_deseadas_TEST<- c(
-  "id", "Dominio", "arrienda", "Nper", "pers_por_cuarto",
+  "id", "dominio", "arrienda", "num_personas", "pers_por_cuarto",
   "num_mujeres", "num_menores", "num_adulto_mayor", "maxEducLevel",
   "num_ocupados", "num_inactivos", "num_con_segundo_empleo",
   "num_recibieron_hrextra", "Jefe_H_mujer", "Jefe_regimen_salud",
   "Jefe_EducLevel", "Jefe_desocupado", "Jefe_Tipo_primer_empleo",
-  "Jefe_edad", "Jefe_adulto_mayor"
+  "Jefe_edad", "Jefe_adulto_mayor", "Jefe_segundo_empleo", "meanEducLevel", 
+  "prop_mujeres", "prop_menores","prop_ocupados","prop_desocupado", "prop_adulto_mayor",
+  "prop_inactivos","prop_subsidio","prop_ss","prop_pension"
 )
 
 TEST <- TEST[, vars_deseadas_TEST]
 
+saveRDS(TRAIN, file = "stores\\work\\trainv2.rds")
+saveRDS(TEST, file = "stores\\work\\testv2.rds")
 
 ##-------------------------------------------------------------------------------##
 #Para visualizar la distribución del desempleo en nuestra muestra, 

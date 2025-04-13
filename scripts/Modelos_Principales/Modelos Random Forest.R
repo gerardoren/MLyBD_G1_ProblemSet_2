@@ -24,7 +24,7 @@ for (i in 1:nrow(grid)) {
   
   # Entrenar el modelo con ranger
   rf <- ranger::ranger(
-    formula = Pobre ~ ., 
+    formula = pobre ~ ., 
     data = sub_TRAIN, 
     num.trees = 500,
     mtry = mtry_val,
@@ -40,7 +40,7 @@ for (i in 1:nrow(grid)) {
   thresholds <- seq(0.1, 0.9, by = 0.01)
   f1_scores <- sapply(thresholds, function(t) {
     pred_labels <- ifelse(rf_probs > t, "Yes", "No")
-    F1_Score(y_pred = as.factor(pred_labels), y_true = sub_TEST$Pobre, positive = "Yes")
+    F1_Score(y_pred = as.factor(pred_labels), y_true = sub_TEST$pobre, positive = "Yes")
   })
   
   best_threshold <- thresholds[which.max(f1_scores)]
@@ -48,9 +48,9 @@ for (i in 1:nrow(grid)) {
   
   final_preds <- ifelse(rf_probs > best_threshold, "Yes", "No")
   cat("Matriz de confusión con ranger:\n")
-  print(table(Real = sub_TEST$Pobre, Predicha = final_preds))
+  print(table(Real = sub_TEST$pobre, Predicha = final_preds))
   
-  f1_final <- F1_Score(y_pred = as.factor(final_preds), y_true = sub_TEST$Pobre, positive = "Yes")
+  f1_final <- F1_Score(y_pred = as.factor(final_preds), y_true = sub_TEST$pobre, positive = "Yes")
   cat("F1-score optimizado con ranger:", round(f1_final, 4), "\n") # F1 = 0.6337 
   
   resultados <- rbind(resultados, data.frame(
@@ -73,7 +73,7 @@ umbral_optimo <- mejor_modelo$best_threshold
 # vuelvo a entrenar el modelo pero con los mejores hiperparametrosy 
 #con TRAIN total para luego hacerlo con TEST:
 rf_optimo <- ranger::ranger(
-  formula = Pobre ~ ., 
+  formula = pobre ~ ., 
   data = TRAIN, 
   num.trees = 500,
   mtry = mejor_modelo$mtry,
@@ -105,7 +105,7 @@ head(predictSample)
 ##-----------------------------------------------------------------------------##
 
 name<- paste0(
-  "Random_forest_mtry_", mejor_modelo$mtry,
+  "stores\\sub\\Random_forest_mtry_", mejor_modelo$mtry,
   "_min.node.size_", mejor_modelo$min.node.size,
   "_best_threshold_", round(umbral_optimo, 2), ".csv") 
 

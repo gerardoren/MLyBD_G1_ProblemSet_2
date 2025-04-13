@@ -9,7 +9,7 @@ ctrl<- trainControl(method = "cv",
                     verbose=FALSE,
                     savePredictions = T)
 
-form_modelo_logit1=Pobre~Dominio+arrienda + Nper + pers_por_cuarto + num_mujeres+ num_menores+
+form_modelo_logit1=pobre~dominio+arrienda + num_personas + pers_por_cuarto + num_mujeres+ num_menores+
   num_adulto_mayor+ maxEducLevel+ num_ocupados + num_inactivos+ 
   num_con_segundo_empleo + num_recibieron_hrextra+ Jefe_H_mujer+
   Jefe_regimen_salud+ Jefe_EducLevel+ Jefe_desocupado+ 
@@ -25,7 +25,7 @@ logit_1
 
 predicciones <- predict(logit_1, newdata = TRAIN, type = "prob")[, "Yes"]
 
-roc_obj_logit <- roc(response = TRAIN$Pobre,  
+roc_obj_logit <- roc(response = TRAIN$pobre,  
                      predictor = predicciones,  
                      levels = c("No", "Yes"),  
                      direction = "<")
@@ -45,7 +45,7 @@ Logit_nuevo_umbral <- TRAIN %>%
            ifelse(pobre_prob_logit_en_sens >= logit_best_threshold$threshold, "Yes", "No"),
            levels = c("No", "Yes")))
 
-cm_model1_Nuevo_umbral <- confusionMatrix(Logit_nuevo_umbral$clasificacion_nuevo_umbral, TRAIN$Pobre, positive = "Yes",  mode = "prec_recall")
+cm_model1_Nuevo_umbral <- confusionMatrix(Logit_nuevo_umbral$clasificacion_nuevo_umbral, TRAIN$pobre, positive = "Yes",  mode = "prec_recall")
 print(cm_model1_Nuevo_umbral)
 
 
@@ -84,7 +84,7 @@ lambda_str <- gsub(
 alpha_str <- gsub("\\.", "_", as.character(logit_1$bestTune$alpha))
 
 name<- paste0(
-  "logit_best_threshold_0.19",
+  "stores\\sub\\logit_best_threshold_0.19",
   ".csv") 
 
 
@@ -108,7 +108,7 @@ ctrl<- trainControl(method = "cv",
                     savePredictions = T)
 
 # Defino la ecuacion de mi primer modelo:
-form_modelo_logit1=Pobre~Dominio+arrienda + Nper + pers_por_cuarto + num_mujeres+ num_menores+
+form_modelo_logit1=pobre~dominio+arrienda + num_personas + pers_por_cuarto + num_mujeres+ num_menores+
   num_adulto_mayor+ maxEducLevel+ num_ocupados + num_inactivos+ 
   num_con_segundo_empleo + num_recibieron_hrextra+ Jefe_H_mujer+
   Jefe_regimen_salud+ Jefe_EducLevel+ Jefe_desocupado+ 
@@ -125,7 +125,7 @@ m_logit_1
 
 predicciones <- predict(m_logit_1, newdata = TRAIN, type = "prob")[, "Yes"]
 
-roc_obj_logit<- roc(response = TRAIN$Pobre,  
+roc_obj_logit<- roc(response = TRAIN$pobre,  
                            predictor = predicciones,  
                            levels = c("No", "Yes"),  
                            direction = "<")
@@ -152,7 +152,7 @@ Logit_prec_recall <- TRAIN %>%
            ifelse(pobre_prob_logit_sens >= umbral_optimo, "Yes", "No"),
            levels = c("No", "Yes")))
 
-cm_Logit_prec_recall <- confusionMatrix(Logit_prec_recall$clasificacion_nuevo_umbral, TRAIN$Pobre, positive = "Yes",  mode = "prec_recall")
+cm_Logit_prec_recall <- confusionMatrix(Logit_prec_recall$clasificacion_nuevo_umbral, TRAIN$pobre, positive = "Yes",  mode = "prec_recall")
 print(cm_Logit_prec_recall)
 
 
@@ -193,7 +193,7 @@ lambda_str <- gsub(
 alpha_str <- gsub("\\.", "_", as.character(logit_ELNET$bestTune$alpha))
 
 name<- paste0(
-  "EN_lambda_", lambda_str,
+  "stores\\sub\\EN_lambda_", lambda_str,
   "_alpha_" , alpha_str, 
   ".csv") 
 

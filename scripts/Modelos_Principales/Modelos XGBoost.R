@@ -22,7 +22,7 @@ grid_xbgoost <- expand.grid(nrounds = c(100),
 grid_xbgoost
 
 
-form_modelo_CART1=Pobre~Dominio+arrienda + Nper + pers_por_cuarto + num_mujeres+ num_menores+
+form_modelo_CART1=pobre~dominio+arrienda + num_personas + pers_por_cuarto + num_mujeres+ num_menores+
   num_adulto_mayor+ maxEducLevel+ num_ocupados + num_inactivos+ 
   num_con_segundo_empleo + num_recibieron_hrextra+ Jefe_H_mujer+
   Jefe_regimen_salud+ Jefe_EducLevel+ Jefe_desocupado+ 
@@ -48,7 +48,7 @@ thresholds <- seq(0.1, 0.9, by = 0.01)
 # === 3. Calcular F1-score para cada umbral ===
 f1_scores <- sapply(thresholds, function(t) {
   pred_labels <- ifelse(xgb_probs > t, "Yes", "No")
-  F1_Score(y_pred = as.factor(pred_labels), y_true = sub_TEST$Pobre, positive = "Yes")
+  F1_Score(y_pred = as.factor(pred_labels), y_true = sub_TEST$pobre, positive = "Yes")
 })
 
 # === 4. Selección del mejor umbral ===
@@ -58,9 +58,9 @@ cat("Mejor umbral según F1 (XGBoost):", best_threshold, "\n")
 # === 5. Clasificación final con umbral óptimo ===
 final_preds <- ifelse(xgb_probs > best_threshold, "Yes", "No")
 cat("Matriz de confusión con XGBoost:\n")
-print(table(Real = sub_TEST$Pobre, Predicha = final_preds))
+print(table(Real = sub_TEST$pobre, Predicha = final_preds))
 
-f1_final <- F1_Score(y_pred = as.factor(final_preds), y_true = sub_TEST$Pobre, positive = "Yes")
+f1_final <- F1_Score(y_pred = as.factor(final_preds), y_true = sub_TEST$pobre, positive = "Yes")
 cat("F1-score optimizado con XGBoost:", round(f1_final, 4), "\n")
 #F1-score optimizado con XGBoost: 0.6481 sin smote
 ## 
@@ -90,7 +90,7 @@ predictSample <- TEST %>%
   select(id, pobre)
 head(predictSample)
 # 5. Exportar CSV final
-name <- paste0("XGBoost_FINAL_", round(best_threshold, 2), "_F1_", round(f1_final, 4), ".csv")
+name <- paste0("stores\\sub\\XGBoost_FINAL_", round(best_threshold, 2), "_F1_", round(f1_final, 4), ".csv")
 write.csv(predictSample, name, row.names = FALSE)
 
 

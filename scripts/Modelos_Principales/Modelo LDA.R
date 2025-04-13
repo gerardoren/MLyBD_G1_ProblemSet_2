@@ -1,6 +1,6 @@
 #Modelo para predecir
 
-modelo_lda1=Pobre~Nper+num_ocupados+arrienda+num_menores+num_mayores+maxEducLevel+Jefe_H_mujer+Jefe_desocupado+Jefe_regimen_salud+Jefe_Tipo_primer_empleo+Jefe_segundo_empleo+Jefe_H_edad
+modelo_lda1=pobre~num_personas+num_ocupados+arrienda+num_menores+num_mayores+maxEducLevel+Jefe_H_mujer+Jefe_desocupado+Jefe_regimen_salud+Jefe_Tipo_primer_empleo+Jefe_segundo_empleo+Jefe_H_edad
 
 
 modelo2_lda_sub <- train(modelo_lda1, 
@@ -17,7 +17,7 @@ TEST_preds <- predict(modelo2_lda_sub, newdata = sub_TEST, type = "raw")
 
 # F1 score fuera de muestra
 
-f1_score <- calculate_f1(true_labels = sub_TEST$Pobre, predicted_labels = TEST_preds)
+f1_score <- calculate_f1(true_labels = sub_TEST$pobre, predicted_labels = TEST_preds)
 print(paste("F1-score LDA:", f1_score))  #0.5564
 
 #Ahora preparamos para utilizar toda TRAIN data
@@ -45,6 +45,6 @@ predictSample<- predictSample %>%
 
 head(predictSample)
 
-name<- paste0("C:/Users/claud/OneDrive/Documents/OneDrive - Universidad de los andes/Universidad Los andes/Noveno semestre/Big data/taller 2/Data/submissions/02_LDA.csv") 
+name<- paste0("stores\\sub\\02_LDA.csv") 
 write.csv(predictSample,name, row.names = FALSE)
 

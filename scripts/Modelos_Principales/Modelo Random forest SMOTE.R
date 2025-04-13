@@ -24,7 +24,7 @@ grid_rf <- expand.grid(
 
 #Modelo a utilizar: 
 
-modelo_RF3=Pobre~Dominio+arrienda + Nper + pers_por_cuarto + num_mujeres+ num_menores+
+modelo_RF3=pobre~dominio+arrienda + num_personas + pers_por_cuarto + num_mujeres+ num_menores+
   num_adulto_mayor+ maxEducLevel+ num_ocupados + num_inactivos+ 
   num_con_segundo_empleo + num_recibieron_hrextra+ Jefe_H_mujer+
   Jefe_regimen_salud+ Jefe_EducLevel+ Jefe_desocupado+ 
@@ -48,7 +48,7 @@ test_probs <- predict(modelo13_rf_sub, newdata = sub_TEST, type = "prob")[, "Yes
 
 # Umbral que maximice F1
 umbrales <- seq(0.05, 0.95, by = 0.01)  
-f1_scores <- sapply(umbrales, calculate_f1_manual, true_labels = sub_TEST$Pobre, predicted_probs = test_probs)
+f1_scores <- sapply(umbrales, calculate_f1_manual, true_labels = sub_TEST$pobre, predicted_probs = test_probs)
 
 # Encontrar el F1 más alto
 umbral_optimo <- umbrales[which.max(f1_scores)]
@@ -91,6 +91,6 @@ predictSample <- predictSample %>%
 
 head(predictSample)
 
-name <- paste0("C:/Users/claud/OneDrive/Documents/OneDrive - Universidad de los andes/Universidad Los andes/Noveno semestre/Big data/taller 2/Data/submissions/RF3ajust_SMOTE_mtry_6_n500.csv") 
+name <- paste0("stores\\sub\\RF3ajust_SMOTE_mtry_6_n500.csv") 
 write.csv(predictSample, name, row.names = FALSE)
 

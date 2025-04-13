@@ -24,7 +24,7 @@ grid_xg <- expand.grid(
 #Modelo que se va a utilizar para entrenar
 
 
-modelo_XGB2=Pobre~Dominio+arrienda + Nper + pers_por_cuarto + num_mujeres+ num_menores+
+modelo_XGB2=pobre~dominio+arrienda + num_personas + pers_por_cuarto + num_mujeres+ num_menores+
   num_adulto_mayor+ maxEducLevel+ num_ocupados + num_inactivos+ 
   num_con_segundo_empleo + num_recibieron_hrextra+ Jefe_H_mujer+
   Jefe_regimen_salud+ Jefe_EducLevel+ Jefe_desocupado+ 
@@ -47,7 +47,7 @@ test_probs <- predict(modelo15_xgb_sub, newdata = sub_TEST, type = "prob")[, "Ye
 
 #Buscamos el umbral que maximise F1 
 umbrales <- seq(0.05, 0.95, by = 0.01)  
-f1_scores <- sapply(umbrales, calculate_f1_manual, true_labels = sub_TEST$Pobre, predicted_probs = test_probs)
+f1_scores <- sapply(umbrales, calculate_f1_manual, true_labels = sub_TEST$pobre, predicted_probs = test_probs)
 
 # Encontramos ese umbral
 
@@ -91,6 +91,6 @@ predictSample <- predictSample %>%
 
 head(predictSample)
 
-name <- paste0("C:/Users/claud/OneDrive/Documents/OneDrive - Universidad de los andes/Universidad Los andes/Noveno semestre/Big data/taller 2/Data/submissions/XGBajust2_smote_eta_0.05_gamma_0_n200.csv") 
+name <- paste0("stores\\sub\\XGBajust2_smote_eta_0.05_gamma_0_n200.csv") 
 write.csv(predictSample, name, row.names = FALSE)
 

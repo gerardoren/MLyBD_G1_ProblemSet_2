@@ -10,7 +10,7 @@ ctrl<- trainControl(method = "cv",
                     savePredictions = T)
 
 # Defino la ecuacion de mi primer modelo:
-form_modelo_logit1=Pobre~Dominio+arrienda + Nper + pers_por_cuarto + num_mujeres+ num_menores+
+form_modelo_logit1=pobre~Dominio+arrienda + Nper + pers_por_cuarto + num_mujeres+ num_menores+
   num_adulto_mayor+ maxEducLevel+ num_ocupados + num_inactivos+ 
   num_con_segundo_empleo + num_recibieron_hrextra+ Jefe_H_mujer+
   Jefe_regimen_salud+ Jefe_EducLevel+ Jefe_desocupado+ 
@@ -49,7 +49,7 @@ logit_ELNET$bestTune
 
 predicciones <- predict(logit_ELNET, newdata = TRAIN, type = "prob")[, "Yes"]
 
-roc_obj_logit_ELNET <- roc(response = TRAIN$Pobre,  
+roc_obj_logit_ELNET <- roc(response = TRAIN$pobre,  
                      predictor = predicciones,  
                      levels = c("No", "Yes"),  
                      direction = "<")
@@ -69,7 +69,7 @@ Logit_ELNET_nuevo_umbral <- TRAIN %>%
            ifelse(pobre_prob_logit_ELNET_sens >= logit_ELNET_best_threshold$threshold, "Yes", "No"),
            levels = c("No", "Yes")))
 
-cm_logit_ELNET_Nuevo_umbral <- confusionMatrix(Logit_ELNET_nuevo_umbral$clasificacion_nuevo_umbral, TRAIN$Pobre, positive = "Yes",  mode = "prec_recall")
+cm_logit_ELNET_Nuevo_umbral <- confusionMatrix(Logit_ELNET_nuevo_umbral$clasificacion_nuevo_umbral, TRAIN$pobre, positive = "Yes",  mode = "prec_recall")
 print(cm_logit_ELNET_Nuevo_umbral)
 
 
@@ -135,7 +135,7 @@ ctrl<- trainControl(method = "cv",
                     savePredictions = T)
 
 # Defino la ecuacion de mi primer modelo:
-form_modelo_logit1=Pobre~Dominio+arrienda + Nper + pers_por_cuarto + num_mujeres+ num_menores+
+form_modelo_logit1=pobre~dominio+arrienda + num_personas + pers_por_cuarto + num_mujeres+ num_menores+
   num_adulto_mayor+ maxEducLevel+ num_ocupados + num_inactivos+ 
   num_con_segundo_empleo + num_recibieron_hrextra+ Jefe_H_mujer+
   Jefe_regimen_salud+ Jefe_EducLevel+ Jefe_desocupado+ 
@@ -174,7 +174,7 @@ logit_ELNET$bestTune
 
 predicciones <- predict(logit_ELNET, newdata = TRAIN, type = "prob")[, "Yes"]
 
-roc_obj_logit_ELNET <- roc(response = TRAIN$Pobre,  
+roc_obj_logit_ELNET <- roc(response = TRAIN$pobre,  
                            predictor = predicciones,  
                            levels = c("No", "Yes"),  
                            direction = "<")
@@ -201,7 +201,7 @@ Logit_ELNET_prec_recall <- TRAIN %>%
            ifelse(pobre_prob_logit_ELNET_sens >= umbral_optimo, "Yes", "No"),
            levels = c("No", "Yes")))
 
-cm_Logit_ELNET_prec_recall <- confusionMatrix(Logit_ELNET_prec_recall$clasificacion_nuevo_umbral, TRAIN$Pobre, positive = "Yes",  mode = "prec_recall")
+cm_Logit_ELNET_prec_recall <- confusionMatrix(Logit_ELNET_prec_recall$clasificacion_nuevo_umbral, TRAIN$pobre, positive = "Yes",  mode = "prec_recall")
 print(cm_Logit_ELNET_prec_recall)
 
 
@@ -242,7 +242,7 @@ lambda_str <- gsub(
 alpha_str <- gsub("\\.", "_", as.character(logit_ELNET$bestTune$alpha))
 
 name<- paste0(
-  "EN_lambda_", lambda_str,
+  "stores\\sub\\EN_lambda_", lambda_str,
   "_alpha_" , alpha_str, 
   ".csv") 
 
